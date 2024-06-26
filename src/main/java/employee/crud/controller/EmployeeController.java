@@ -1,13 +1,18 @@
 package employee.crud.controller;
 
-import java.io.*;
 
+
+import employee.crud.bean.Employee;
 import employee.crud.dao.EmployeeDAO;
 import employee.crud.dao.EmployeeDAOImpl;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
+
+import java.io.IOException;
+import java.util.List;
 
 @WebServlet(name = "EmployeeControllerServlet", value = "/EmployeeController-servlet")
 public class EmployeeController extends HttpServlet {
@@ -70,6 +75,10 @@ public class EmployeeController extends HttpServlet {
     }
 
     private void getAllEmployees(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException  {
+        List<Employee> employees = employeeDAO.getAllEmployee();
+        request.setAttribute("employees", employees);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
+        dispatcher.forward(request, response);
     }
 
     private void getEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException  {
