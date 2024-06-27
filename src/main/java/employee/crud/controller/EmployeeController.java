@@ -1,7 +1,5 @@
 package employee.crud.controller;
 
-
-
 import employee.crud.bean.Employee;
 import employee.crud.dao.EmployeeDAO;
 import employee.crud.dao.EmployeeDAOImpl;
@@ -14,7 +12,7 @@ import jakarta.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "EmployeeControllerServlet", value = "/EmployeeController-servlet")
+@WebServlet(name = "EmployeeControllerServlet", urlPatterns = {"", "/add"})
 public class EmployeeController extends HttpServlet {
 
     EmployeeDAO employeeDAO = null;
@@ -30,42 +28,40 @@ public class EmployeeController extends HttpServlet {
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        getAllEmployees(request, response);
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String action = request.getServletPath();
 
         switch(action) {
-            case "add":
-            {
+            case "/add":
                 addNewEmployee(request, response);
                 break;
-            }
-            case "update":
-            {
+            case "/update":
                 updateEmployee(request, response);
                 break;
-            }
-            case "delete":
-            {
+            case "/delete":
                 deleteEmployee(request, response);
                 break;
-            }
-            case "list":
-            {
-                getAllEmployees(request, response);
-                break;
-            }
-            case "get":
-            {
+            case "/get":
                 getEmployee(request, response);
                 break;
-            }
-
+            default:
+                getAllEmployees(request, response);
+                break;
         }
     }
 
     private void addNewEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String name     = request.getParameter("name");
+        String email    = request.getParameter("email");
+        String phone    = request.getParameter("phone");
+        String address  = request.getParameter("address");
+
+        Employee employee = new Employee(name, email, phone, address);
+        employeeDAO.addEmployee(employee);
+        response.sendRedirect("");
     }
 
     private void updateEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException  {

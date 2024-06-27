@@ -3,6 +3,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -58,28 +59,28 @@
                     </thead>
                     <tbody>
 
-<%--                        <c:forEach var="employee" items="${employees}">--%>
-<%--                            <tr>--%>
-<%--                                <td>--%>
-<%--                                    <span class="custom-checkbox">--%>
-<%--                                        <input type="checkbox" id="checkbox1" name="options[]" value="1">--%>
-<%--                                        <label for="checkbox1"></label>--%>
-<%--                                    </span>--%>
-<%--                                </td>--%>
-<%--                                <td>${ employee.name }</td>--%>
-<%--                                <td>${ employee.email }</td>--%>
-<%--                                <td>${ employee.address }</td>--%>
-<%--                                <td>${ employee.phone }</td>--%>
-<%--                                <td>--%>
-<%--                                    <a href="#editEmployeeModal" class="edit" data-toggle="modal">--%>
-<%--                                        <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>--%>
-<%--                                    </a>--%>
-<%--                                    <a href="#deleteEmployeeModal" class="delete" data-toggle="modal">--%>
-<%--                                        <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>--%>
-<%--                                    </a>--%>
-<%--                                </td>--%>
-<%--                            </tr>--%>
-<%--                        </c:forEach>--%>
+                        <c:forEach var="employee" items="${employees}">
+                            <tr>
+                                <td>
+                                    <span class="custom-checkbox">
+                                        <input type="checkbox" id="checkbox1" name="options[]" value="1">
+                                        <label for="checkbox1"></label>
+                                    </span>
+                                </td>
+                                <td>${ employee.name }</td>
+                                <td>${ employee.email }</td>
+                                <td>${ employee.address }</td>
+                                <td>${ employee.phone }</td>
+                                <td>
+                                    <a href="#editEmployeeModal" class="edit" data-toggle="modal">
+                                        <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
+                                    </a>
+                                    <a href="#deleteEmployeeModal" class="delete" data-toggle="modal">
+                                        <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </c:forEach>
 
 
 
@@ -102,43 +103,11 @@
                 </div>
             </div>
         </div>
+
+        <jsp:include page="add.jsp"></jsp:include>
+
         <!-- Edit Modal HTML -->
-        <div id="addEmployeeModal" class="modal fade">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <form>
-                        <div class="modal-header">
-                            <h4 class="modal-title">Add Employee</h4>
-                            <button type="button" class="close" data-dismiss="modal"
-                                    aria-hidden="true">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label>Name</label> <input type="text" class="form-control"
-                                                           required>
-                            </div>
-                            <div class="form-group">
-                                <label>Email</label> <input type="email" class="form-control"
-                                                            required>
-                            </div>
-                            <div class="form-group">
-                                <label>Address</label>
-                                <textarea class="form-control" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>Phone</label> <input type="text" class="form-control"
-                                                            required>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <input type="button" class="btn btn-default" data-dismiss="modal"
-                                   value="Cancel"> <input type="submit"
-                                                          class="btn btn-success" value="Add">
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+
         <!-- Edit Modal HTML -->
         <div id="editEmployeeModal" class="modal fade">
             <div class="modal-dialog">
