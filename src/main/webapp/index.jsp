@@ -23,9 +23,41 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script src="js/employee.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js" integrity="sha512-KZmyTq3PLx9EZl0RHShHQuXtrvdJ+m35tuOiwlcZfs/rE7NZv29ygNA8SFCkMXTnYZQK2OX0Gm2qKGfvWEtRXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+        <script>
+            var app = angular.module('employeeApp', []);
+            app.controller('employeeController', function($scope) {
+                $scope.getEmployeeDetails = function (employeeId) {
+                    var employeeDetails = [];
+                    $.ajax(
+                        {
+                            url: 'get',
+                            type: 'POST',
+                            data: {"employeeId": employeeId},
+                            async: false,
+                            success: function(data, textStatus, jqXHR) {
+                                employeeDetails = data;
+                            },
+                            error: function (jqXHR, textStatus, error) {
+                                employeeDetails = [];
+                                console.log("Error in getting employee details from server " +  error)
+                            }
+                        }
+
+                    );
+
+                    $scope.employee = JSON.parse(employeeDetails);
+                    updateForm.name.value = $scope.employee.name;
+                    return $scope.employee;
+                }
+            })
+
+
+        </script>
     </head>
 
-    <body>
+    <body ng-app="employeeApp" ng-controller="employeeController">
         <div class="container">
             <div class="table-wrapper">
                 <div class="table-title">
@@ -73,7 +105,7 @@
                                 <td>${ employee.phone }</td>
                                 <td>
                                     <a href="#editEmployeeModal" class="edit" data-toggle="modal">
-                                        <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
+                                        <i class="material-icons" ng-click="getEmployeeDetails('${employee.id}')" data-toggle="tooltip" title="Edit">&#xE254;</i>
                                     </a>
                                     <a href="#deleteEmployeeModal" class="delete" data-toggle="modal">
                                         <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
@@ -104,47 +136,14 @@
             </div>
         </div>
 
+        <!-- add Modal HTML -->
+
         <jsp:include page="add.jsp"></jsp:include>
 
         <!-- Edit Modal HTML -->
 
-        <!-- Edit Modal HTML -->
-        <div id="editEmployeeModal" class="modal fade">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <form>
-                        <div class="modal-header">
-                            <h4 class="modal-title">Edit Employee</h4>
-                            <button type="button" class="close" data-dismiss="modal"
-                                    aria-hidden="true">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label>Name</label> <input type="text" class="form-control"
-                                                           required>
-                            </div>
-                            <div class="form-group">
-                                <label>Email</label> <input type="email" class="form-control"
-                                                            required>
-                            </div>
-                            <div class="form-group">
-                                <label>Address</label>
-                                <textarea class="form-control" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>Phone</label> <input type="text" class="form-control"
-                                                            required>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <input type="button" class="btn btn-default" data-dismiss="modal"
-                                   value="Cancel"> <input type="submit" class="btn btn-info"
-                                                          value="Save">
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+        <jsp:include page="update.jsp"></jsp:include>
+
         <!-- Delete Modal HTML -->
         <div id="deleteEmployeeModal" class="modal fade">
             <div class="modal-dialog">

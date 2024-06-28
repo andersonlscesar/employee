@@ -69,7 +69,7 @@ public class EmployeeDAOImpl implements EmployeeDAO {
     public List<Employee> getAllEmployee() {
 
         try {
-            String query = "SELECT * FROM employee";
+            String query = "SELECT * FROM employee order by id desc";
             PreparedStatement pst = connection.prepareStatement(query);
             ResultSet rs = pst.executeQuery();
             List<Employee> employees = new ArrayList<Employee>();

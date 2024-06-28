@@ -6,13 +6,15 @@ import employee.crud.dao.EmployeeDAOImpl;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "EmployeeControllerServlet", urlPatterns = {"", "/add"})
+@WebServlet(name = "EmployeeControllerServlet", urlPatterns = {"", "/add", "/get"})
 public class EmployeeController extends HttpServlet {
 
     EmployeeDAO employeeDAO = null;
@@ -58,10 +60,9 @@ public class EmployeeController extends HttpServlet {
         String email    = request.getParameter("email");
         String phone    = request.getParameter("phone");
         String address  = request.getParameter("address");
-
         Employee employee = new Employee(name, email, phone, address);
         employeeDAO.addEmployee(employee);
-        response.sendRedirect("");
+        response.sendRedirect( request.getContextPath() + "/" );
     }
 
     private void updateEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException  {
@@ -78,6 +79,16 @@ public class EmployeeController extends HttpServlet {
     }
 
     private void getEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException  {
+        int id = Integer.parseInt(request.getParameter("employeeId"));
+        Employee employee = employeeDAO.getEmployee(id);
+        ObjectMapper mapper = new ObjectMapper();
+        String employeeStr = mapper.writeValueAsString(employee);
+        response.setContentType("application/json");
+        ServletOutputStream servletOutputStream = response.getOutputStream();
+        servletOutputStream.write(employeeStr.getBytes());
+        servletOutputStream.flush();
+        servletOutputStream.close();
+
     }
 
 }
