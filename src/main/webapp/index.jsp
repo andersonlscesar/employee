@@ -27,6 +27,7 @@
 
         <script>
             var app = angular.module('employeeApp', []);
+
             app.controller('employeeController', function($scope) {
                 $scope.getEmployeeDetails = function (employeeId) {
                     var employeeDetails = [];
@@ -48,7 +49,151 @@
                     );
                     return $scope.employee;
                 }
+
+                document.getElementById("deleteBtn").addEventListener("click", function(event) {
+                    event.preventDefault(); // Prevent the default form submission
+                    console.log("Click");
+
+                    var deletedEmployees = [];
+                    var checkboxes = document.querySelectorAll("input[type='checkbox'].employeeCheckBox:checked");
+
+                    checkboxes.forEach(function(checkbox) {
+                        deletedEmployees.push(checkbox.value);
+                    });
+
+                    var employeeIds = deletedEmployees.join(",");
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "delete", false);
+                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState === XMLHttpRequest.DONE) {
+                            if (xhr.status === 200) {
+                                var response = xhr.responseText;
+                                if (response !== "") {
+                                    console.log(response);
+                                } else {
+                                    console.log("Empty response");
+                                }
+                                window.location.href = "/employee_war_exploded/";
+                            } else {
+                                console.log("Something went wrong ", xhr.statusText);
+                                alert("Exception, errorThrown: " + xhr.statusText);
+                            }
+                        }
+                    };
+
+                    xhr.send("employeeIds=" + encodeURIComponent(employeeIds)); // Adjusted the parameter name
+                });
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    var currentPage = 1;
+                    var totalPages = 5; // Set this to the total number of pages
+
+                    // Function to load a page
+                    function loadPage(page) {
+                        if (page < 1 || page > totalPages) return;
+
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('GET', 'Pagination-servlet?page=' + page, true);
+
+                        xhr.onreadystatechange = function() {
+                            if (xhr.readyState === XMLHttpRequest.DONE) {
+                                if (xhr.status === 200) {
+                                    var data = JSON.parse(xhr.responseText);
+                                    updateTable(data.entries);
+                                    updatePagination(data.currentPage, data.totalPages, data.totalEntries);
+                                } else {
+                                    console.error('Something went wrong', xhr.statusText);
+                                }
+                            }
+                        };
+
+                        xhr.send();
+                    }
+
+                    // Function to update the table
+                    function updateTable(entries) {
+                        var tableContainer = document.getElementById('table-container');
+                        var tableHtml = '<table class="table table-bordered">';
+                        tableHtml += '<thead><tr><th>ID</th><th>Name</th></tr></thead><tbody>';
+
+                        entries.forEach(function(entry) {
+                            tableHtml += '<tr><td>' + entry.id + '</td><td>' + entry.name + '</td></tr>';
+                        });
+
+                        tableHtml += '</tbody></table>';
+                        tableContainer.innerHTML = tableHtml;
+                    }
+
+                    // Function to update the pagination
+                    function updatePagination(currentPage, totalPages, totalEntries) {
+                        var pagination = document.getElementById('pagination');
+                        var hintText = document.getElementById('currentEntries');
+                        var totalText = document.getElementById('totalEntries');
+
+                        hintText.textContent = currentPage * ENTRIES_PER_PAGE;
+                        totalText.textContent = totalEntries;
+
+                        // Clear current pagination
+                        while (pagination.firstChild) {
+                            pagination.removeChild(pagination.firstChild);
+                        }
+
+                        // Add Previous button
+                        var prevPageItem = document.createElement('li');
+                        prevPageItem.className = 'page-item' + (currentPage === 1 ? ' disabled' : '');
+                        var prevLink = document.createElement('a');
+                        prevLink.className = 'page-link';
+                        prevLink.href = '#';
+                        prevLink.textContent = 'Previous';
+                        prevLink.addEventListener('click', function(event) {
+                            event.preventDefault();
+                            loadPage(currentPage - 1);
+                        });
+                        prevPageItem.appendChild(prevLink);
+                        pagination.appendChild(prevPageItem);
+
+                        // Add page number buttons
+                        for (var i = 1; i <= totalPages; i++) {
+                            var pageItem = document.createElement('li');
+                            pageItem.className = 'page-item' + (i === currentPage ? ' active' : '');
+                            var pageLink = document.createElement('a');
+                            pageLink.className = 'page-link';
+                            pageLink.href = '#';
+                            pageLink.textContent = i;
+                            pageLink.addEventListener('click', function(event) {
+                                event.preventDefault();
+                                loadPage(parseInt(this.textContent));
+                            });
+                            pageItem.appendChild(pageLink);
+                            pagination.appendChild(pageItem);
+                        }
+
+                        // Add Next button
+                        var nextPageItem = document.createElement('li');
+                        nextPageItem.className = 'page-item' + (currentPage === totalPages ? ' disabled' : '');
+                        var nextLink = document.createElement('a');
+                        nextLink.className = 'page-link';
+                        nextLink.href = '#';
+                        nextLink.textContent = 'Next';
+                        nextLink.addEventListener('click', function(event) {
+                            event.preventDefault();
+                            loadPage(currentPage + 1);
+                        });
+                        nextPageItem.appendChild(nextLink);
+                        pagination.appendChild(nextPageItem);
+                    }
+
+                    // Initial load
+                    loadPage(1);
+                });
+
+
             })
+
+
+
 
 
         </script>
@@ -92,8 +237,8 @@
                             <tr>
                                 <td>
                                     <span class="custom-checkbox">
-                                        <input type="checkbox" id="checkbox1" name="options[]" value="1">
-                                        <label for="checkbox1"></label>
+                                        <input type="checkbox" class="employeeCheckBox" id="${employee.id}" name="options[]"  value="${employee.id}">
+                                        <label for="${employee.id}"></label>
                                     </span>
                                 </td>
                                 <td>${ employee.name }</td>
@@ -142,30 +287,9 @@
         <jsp:include page="update.jsp"></jsp:include>
 
         <!-- Delete Modal HTML -->
-        <div id="deleteEmployeeModal" class="modal fade">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <form>
-                        <div class="modal-header">
-                            <h4 class="modal-title">Delete Employee</h4>
-                            <button type="button" class="close" data-dismiss="modal"
-                                    aria-hidden="true">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Are you sure you want to delete these Records?</p>
-                            <p class="text-warning">
-                                <small>This action cannot be undone.</small>
-                            </p>
-                        </div>
-                        <div class="modal-footer">
-                            <input type="button" class="btn btn-default" data-dismiss="modal"
-                                   value="Cancel"> <input type="submit"
-                                                          class="btn btn-danger" value="Delete">
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+
+        <jsp:include page="delete.jsp"></jsp:include>
+
     </body>
 
 </html>

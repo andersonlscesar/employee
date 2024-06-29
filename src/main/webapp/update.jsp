@@ -14,22 +14,23 @@
         <div class="modal-body">
           <div class="form-group">
             <label>Name</label>
-            <input type="text" ng-model="employee.name" class="form-control" required>
+            <input type="text" ng-model="employee.name" name="name" class="form-control" required>
           </div>
           <div class="form-group">
             <label>Email</label>
-            <input type="email" ng-model="employee.email" class="form-control" required>
+            <input type="email" ng-model="employee.email" name="email" class="form-control" required>
           </div>
           <div class="form-group">
             <label>Address</label>
-            <textarea class="form-control" ng-model="employee.address" required></textarea>
+            <textarea class="form-control" ng-model="employee.address" name="address" required></textarea>
           </div>
           <div class="form-group">
             <label>Phone</label>
-            <input type="text" ng-model="employee.phone" class="form-control" required>
+            <input type="text" ng-model="employee.phone" name="phone" class="form-control" required>
           </div>
         </div>
         <div class="modal-footer">
+          <input type="hidden" name="id" value="{{employee.id}}">
           <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
           <input type="submit" class="btn btn-info" value="Save">
         </div>

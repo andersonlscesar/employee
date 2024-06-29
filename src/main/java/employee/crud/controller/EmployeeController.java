@@ -13,8 +13,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.StringTokenizer;
 
-@WebServlet(name = "EmployeeControllerServlet", urlPatterns = {"", "/add", "/get"})
+@WebServlet(name = "EmployeeControllerServlet", urlPatterns = {"", "/add", "/get", "/update", "/delete"})
 public class EmployeeController extends HttpServlet {
 
     EmployeeDAO employeeDAO = null;
@@ -31,7 +32,6 @@ public class EmployeeController extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         getAllEmployees(request, response);
-        System.out.println("teste");
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -67,10 +67,28 @@ public class EmployeeController extends HttpServlet {
     }
 
     private void updateEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException  {
+        int id = Integer.parseInt(request.getParameter("id"));
+        String name     = request.getParameter("name");
+        String email    = request.getParameter("email");
+        String phone    = request.getParameter("phone");
+        String address  = request.getParameter("address");
+        Employee employee = new Employee(id, name, email, phone, address);
+        employeeDAO.updateEmployee(employee);
+        response.sendRedirect( request.getContextPath() + "/");
     }
 
-    private void deleteEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException  {
+    private void deleteEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String employeeIds = request.getParameter("employeeIds");
+        if (employeeIds != null && !employeeIds.isEmpty()) {
+            StringTokenizer tokenizer = new StringTokenizer(employeeIds, ",");
+            while (tokenizer.hasMoreElements()) {
+                int employeeId = Integer.parseInt(tokenizer.nextToken());
+                employeeDAO.deleteEmployee(employeeId);
+            }
+        }
+        response.sendRedirect(request.getContextPath() + "/");
     }
+
 
     private void getAllEmployees(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException  {
         List<Employee> employees = employeeDAO.getAllEmployee();
@@ -89,7 +107,6 @@ public class EmployeeController extends HttpServlet {
         servletOutputStream.write(employeeStr.getBytes());
         servletOutputStream.flush();
         servletOutputStream.close();
-
     }
 
 }
