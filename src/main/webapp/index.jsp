@@ -1,8 +1,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
-
+<%@ page import="employee.crud.db.DBConnection"%>
+<%DBConnection.getConnection();%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -38,17 +38,14 @@
                             async: false,
                             success: function(data, textStatus, jqXHR) {
                                 employeeDetails = data;
+                                $scope.employee = employeeDetails;
                             },
                             error: function (jqXHR, textStatus, error) {
                                 employeeDetails = [];
                                 console.log("Error in getting employee details from server " +  error)
                             }
                         }
-
                     );
-
-                    $scope.employee = JSON.parse(employeeDetails);
-                    updateForm.name.value = $scope.employee.name;
                     return $scope.employee;
                 }
             })

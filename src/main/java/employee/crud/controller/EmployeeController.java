@@ -31,6 +31,7 @@ public class EmployeeController extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         getAllEmployees(request, response);
+        System.out.println("teste");
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {

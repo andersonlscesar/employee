@@ -14,19 +14,19 @@
         <div class="modal-body">
           <div class="form-group">
             <label>Name</label>
-            <input type="text" ng-model="updateForm.name" class="form-control" required>
+            <input type="text" ng-model="employee.name" class="form-control" required>
           </div>
           <div class="form-group">
             <label>Email</label>
-            <input type="email" ng-model="updateForm.email" class="form-control" required>
+            <input type="email" ng-model="employee.email" class="form-control" required>
           </div>
           <div class="form-group">
             <label>Address</label>
-            <textarea class="form-control" ng-model="updateForm.address" required></textarea>
+            <textarea class="form-control" ng-model="employee.address" required></textarea>
           </div>
           <div class="form-group">
             <label>Phone</label>
-            <input type="text" ng-model="updateForm.phone" class="form-control" required>
+            <input type="text" ng-model="employee.phone" class="form-control" required>
           </div>
         </div>
         <div class="modal-footer">
